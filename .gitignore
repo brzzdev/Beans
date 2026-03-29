@@ -7,9 +7,6 @@ DerivedData/
 ## SPM
 .build/
 
-## SwiftFormat
-.swiftformat
-
 ## macOS
 .DS_Store
 
