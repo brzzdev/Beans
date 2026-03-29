@@ -3,14 +3,18 @@ import SwiftUI
 
 @ViewAction(for: AppReducer.self)
 public struct BeansApp: App {
+	@State private var isInserted = true
+
 	public let store = Store(initialState: AppReducer.State()) {
 		AppReducer()
 	}
-	
-	public init() {}
-	
+
+	public init() {
+		store.send(.setup)
+	}
+
 	public var body: some Scene {
-		MenuBarExtra {
+		MenuBarExtra(isInserted: $isInserted) {
 			MenuContent(store: store)
 		} label: {
 			Image(systemName: store.isActive ? "mug.fill" : "mug")
@@ -47,6 +51,15 @@ private struct MenuContent: View {
 				}
 			}
 		}
+		Divider()
+		Toggle("Activate on Launch", isOn: Binding(
+			get: { store.activateOnLaunch },
+			set: { _ in store.send(.view(.toggleActivateOnLaunch)) }
+		))
+		Toggle("Launch at Login", isOn: Binding(
+			get: { store.launchAtLogin },
+			set: { _ in store.send(.view(.toggleLaunchAtLogin)) }
+		))
 		Divider()
 		Button("Quit") {
 			store.send(.view(.quit))

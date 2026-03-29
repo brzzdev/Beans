@@ -13,6 +13,7 @@ let package = Package(
 		.package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.11.0"),
 		.package(path: "../Dependencies/DepNSApp"),
 		.package(path: "../Dependencies/DepPowerAssertion"),
+		.package(path: "../Dependencies/DepSMAppService"),
 	],
 	targets: [
 		.target(
@@ -21,6 +22,7 @@ let package = Package(
 				.product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
 				"DepNSApp",
 				"DepPowerAssertion",
+				"DepSMAppService",
 			],
 			path: "Sources"
 		),
@@ -32,6 +34,7 @@ let package = Package(
 				.product(name: "DependenciesTestSupport", package: "swift-dependencies"),
 				"DepNSApp",
 				"DepPowerAssertion",
+				"DepSMAppService",
 			],
 			path: "Tests"
 		),

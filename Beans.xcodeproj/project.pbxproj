@@ -13,6 +13,34 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		E58681772F792F9D003DA562 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E58681172F792F9C003DA562 /* Integration.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CAF21DCC29B66D7500368A47;
+			remoteInfo = Integration;
+		};
+		E58681792F792F9D003DA562 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E58681172F792F9C003DA562 /* Integration.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CAF21DE629B66D7700368A47;
+			remoteInfo = IntegrationUITests;
+		};
+		E586A2FB2F792FDF003DA562 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E58681A62F792F9D003DA562 /* SwiftRefactorExtension.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 25F743FB1DA97E9000CCD5AD;
+			remoteInfo = Host;
+		};
+		E586A2FD2F792FDF003DA562 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E58681A62F792F9D003DA562 /* SwiftRefactorExtension.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 25F744111DA97ED800CCD5AD;
+			remoteInfo = SwiftRefactorExtension;
+		};
 		E5EFC4202F792A240087E565 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = E5EFC1682F792A230087E565 /* SwiftRefactorExtension.xcodeproj */;
@@ -47,6 +75,8 @@
 		B50000042A000004 /* Beans.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Beans.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B50000052A000005 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		B50000072A000007 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		E58681172F792F9C003DA562 /* Integration.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Integration.xcodeproj; sourceTree = "<group>"; };
+		E58681A62F792F9D003DA562 /* SwiftRefactorExtension.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = SwiftRefactorExtension.xcodeproj; sourceTree = "<group>"; };
 		E5EFC1682F792A230087E565 /* SwiftRefactorExtension.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = SwiftRefactorExtension.xcodeproj; sourceTree = "<group>"; };
 		E5EFC4342F792A240087E565 /* Integration.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Integration.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -89,6 +119,24 @@
 			isa = PBXGroup;
 			children = (
 				B50000042A000004 /* Beans.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E58681732F792F9C003DA562 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E58681782F792F9D003DA562 /* Integration.app */,
+				E586817A2F792F9D003DA562 /* IntegrationUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E58684632F792F9D003DA562 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E586A2FC2F792FDF003DA562 /* Host.app */,
+				E586A2FE2F792FDF003DA562 /* Swift Refactor.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -166,8 +214,16 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = E58681732F792F9C003DA562 /* Products */;
+					ProjectRef = E58681172F792F9C003DA562 /* Integration.xcodeproj */;
+				},
+				{
 					ProductGroup = E5EFC4902F792A240087E565 /* Products */;
 					ProjectRef = E5EFC4342F792A240087E565 /* Integration.xcodeproj */;
+				},
+				{
+					ProductGroup = E58684632F792F9D003DA562 /* Products */;
+					ProjectRef = E58681A62F792F9D003DA562 /* SwiftRefactorExtension.xcodeproj */;
 				},
 				{
 					ProductGroup = E5EFC27C2F792A230087E565 /* Products */;
@@ -182,6 +238,34 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		E58681782F792F9D003DA562 /* Integration.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = Integration.app;
+			remoteRef = E58681772F792F9D003DA562 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		E586817A2F792F9D003DA562 /* IntegrationUITests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = IntegrationUITests.xctest;
+			remoteRef = E58681792F792F9D003DA562 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		E586A2FC2F792FDF003DA562 /* Host.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = Host.app;
+			remoteRef = E586A2FB2F792FDF003DA562 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		E586A2FE2F792FDF003DA562 /* Swift Refactor.appex */ = {
+			isa = PBXReferenceProxy;
+			fileType = "wrapper.app-extension";
+			path = "Swift Refactor.appex";
+			remoteRef = E586A2FD2F792FDF003DA562 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		E5EFC4212F792A240087E565 /* Host.app */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.application;

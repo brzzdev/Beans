@@ -2,6 +2,7 @@ import ComposableArchitecture
 import DependenciesTestSupport
 import DepNSApp
 import DepPowerAssertion
+import DepSMAppService
 import Synchronization
 import Testing
 
@@ -134,7 +135,7 @@ struct AppReducerTests {
 	}
 
 	@Test func timerFinished() async {
-		let store = makeStore(state: AppReducer.State(isActive: true, duration: .seconds(1_800)))
+		let store = makeStore(state: AppReducer.State(duration: .seconds(1_800), isActive: true))
 
 		await store.send(.timerFinished) {
 			$0.isActive = false
@@ -153,6 +154,98 @@ struct AppReducerTests {
 		await store.send(.view(.quit))
 		#expect(terminateCount.get() == 1)
 		#expect(deactivateCount.get() == 1)
+	}
+
+	@Test func setupActivatesOnLaunch() async {
+		let store = makeStore {
+			$0.smAppService = SMAppServiceDependency(
+				isEnabled: { false },
+				register: {},
+				unregister: {}
+			)
+		}
+
+		store.state.$activateOnLaunch.withLock { $0 = true }
+
+		await store.send(.setup) {
+			$0.isActive = true
+		}
+
+		#expect(activateCount.get() == 1)
+	}
+
+	@Test func setupDoesNotActivateWhenDisabled() async {
+		let store = makeStore {
+			$0.smAppService = SMAppServiceDependency(
+				isEnabled: { false },
+				register: {},
+				unregister: {}
+			)
+		}
+
+		await store.send(.setup)
+
+		#expect(activateCount.get() == 0)
+	}
+
+	@Test func setupReadsLaunchAtLoginStatus() async {
+		let store = makeStore {
+			$0.smAppService = SMAppServiceDependency(
+				isEnabled: { true },
+				register: {},
+				unregister: {}
+			)
+		}
+
+		await store.send(.setup) {
+			$0.launchAtLogin = true
+		}
+	}
+
+	@Test func toggleActivateOnLaunch() async {
+		let store = makeStore()
+
+		await store.send(.view(.toggleActivateOnLaunch)) {
+			$0.$activateOnLaunch.withLock { $0 = true }
+		}
+
+		await store.send(.view(.toggleActivateOnLaunch)) {
+			$0.$activateOnLaunch.withLock { $0 = false }
+		}
+	}
+
+	@Test func toggleLaunchAtLogin() async {
+		let registerCount = Counter()
+		let store = makeStore {
+			$0.smAppService = SMAppServiceDependency(
+				isEnabled: { false },
+				register: { registerCount.increment() },
+				unregister: {}
+			)
+		}
+
+		await store.send(.view(.toggleLaunchAtLogin)) {
+			$0.launchAtLogin = true
+		}
+
+		#expect(registerCount.get() == 1)
+	}
+
+	@Test func toggleLaunchAtLoginUnregisters() async {
+		let unregisterCount = Counter()
+		let store = makeStore(state: AppReducer.State(launchAtLogin: true)) {
+			$0.smAppService = SMAppServiceDependency(
+				isEnabled: { true },
+				register: {},
+				unregister: { unregisterCount.increment() }
+			)
+		}
+
+		await store.send(.view(.toggleLaunchAtLogin)) {
+			$0.launchAtLogin = false
+		}
+
+		#expect(unregisterCount.get() == 1)
 	}
 
 	private func makeStore(
