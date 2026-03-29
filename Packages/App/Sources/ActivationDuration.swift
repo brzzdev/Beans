@@ -14,10 +14,10 @@ public enum ActivationDuration: String, CaseIterable, Identifiable, Sendable {
 
 	public var duration: Duration {
 		switch self {
-		case .thirtyMinutes: .seconds(1800)
-		case .oneHour: .seconds(3600)
-		case .twoHours: .seconds(7200)
-		case .fourHours: .seconds(14400)
+		case .thirtyMinutes: .seconds(1_800)
+		case .oneHour: .seconds(3_600)
+		case .twoHours: .seconds(7_200)
+		case .fourHours: .seconds(14_400)
 		}
 	}
 }

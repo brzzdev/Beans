@@ -41,7 +41,7 @@ struct AppReducerTests {
 			$0.continuousClock = clock
 		}
 
-		let duration = Duration.seconds(1800)
+		let duration = Duration.seconds(1_800)
 		await store.send(.view(.activateForDuration(duration))) {
 			$0.isActive = true
 			$0.duration = duration
@@ -79,7 +79,7 @@ struct AppReducerTests {
 			$0.continuousClock = clock
 		}
 
-		let duration = Duration.seconds(3600)
+		let duration = Duration.seconds(3_600)
 		await store.send(.view(.activateForDuration(duration))) {
 			$0.isActive = true
 			$0.duration = duration
@@ -99,7 +99,7 @@ struct AppReducerTests {
 			$0.continuousClock = clock
 		}
 
-		let duration = Duration.seconds(3600)
+		let duration = Duration.seconds(3_600)
 		await store.send(.view(.activateForDuration(duration))) {
 			$0.isActive = true
 			$0.duration = duration
@@ -118,18 +118,18 @@ struct AppReducerTests {
 			$0.continuousClock = clock
 		}
 
-		await store.send(.view(.activateForDuration(.seconds(1800)))) {
+		await store.send(.view(.activateForDuration(.seconds(1_800)))) {
 			$0.isActive = true
-			$0.duration = .seconds(1800)
+			$0.duration = .seconds(1_800)
 		}
 
-		await store.send(.view(.activateForDuration(.seconds(7200)))) {
-			$0.duration = .seconds(7200)
+		await store.send(.view(.activateForDuration(.seconds(7_200)))) {
+			$0.duration = .seconds(7_200)
 		}
 
 		#expect(activateCount.get() == 2)
 
-		await clock.advance(by: .seconds(7200))
+		await clock.advance(by: .seconds(7_200))
 		await store.receive(\.timerFinished) {
 			$0.isActive = false
 			$0.duration = nil
@@ -139,7 +139,7 @@ struct AppReducerTests {
 	}
 
 	@Test func `timer finished`() async {
-		let store = makeStore(state: AppReducer.State(duration: .seconds(1800), isActive: true))
+		let store = makeStore(state: AppReducer.State(duration: .seconds(1_800), isActive: true))
 
 		await store.send(.timerFinished) {
 			$0.isActive = false
