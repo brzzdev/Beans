@@ -15,9 +15,9 @@ public struct NSAppDependency: Sendable {
 }
 
 extension NSAppDependency: DependencyKey {
-	public static let testValue = Self()
-
 	public static let liveValue = Self(
-		terminate: { NSApp.terminate(nil) }
+		terminate: { NSApp.terminate(nil) },
 	)
+
+	public static let testValue = Self()
 }

@@ -17,11 +17,11 @@ public struct SMAppServiceDependency: Sendable {
 }
 
 extension SMAppServiceDependency: DependencyKey {
-	public static let testValue = Self()
-
 	public static let liveValue = Self(
 		isEnabled: { SMAppService.mainApp.status == .enabled },
 		register: { try SMAppService.mainApp.register() },
-		unregister: { try SMAppService.mainApp.unregister() }
+		unregister: { try SMAppService.mainApp.unregister() },
 	)
+
+	public static let testValue = Self()
 }

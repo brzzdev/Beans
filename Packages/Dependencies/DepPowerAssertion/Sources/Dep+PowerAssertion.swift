@@ -22,8 +22,6 @@ public struct PowerAssertionClient: Sendable {
 extension PowerAssertionClient: DependencyKey {
 	private static let assertionID = Mutex<IOPMAssertionID>(0)
 
-	public static let testValue = Self()
-
 	public static let liveValue = Self(
 		activate: {
 			assertionID.withLock { id in
@@ -33,7 +31,7 @@ extension PowerAssertionClient: DependencyKey {
 					kIOPMAssertionTypePreventUserIdleDisplaySleep as CFString,
 					IOPMAssertionLevel(kIOPMAssertionLevelOn),
 					reason,
-					&id
+					&id,
 				)
 				let createdID = id
 				if result == kIOReturnSuccess {
@@ -47,8 +45,10 @@ extension PowerAssertionClient: DependencyKey {
 			assertionID.withLock { id in
 				deactivate(id: &id)
 			}
-		}
+		},
 	)
+
+	public static let testValue = Self()
 
 	private static func deactivate(id: inout IOPMAssertionID) {
 		if id != 0 {

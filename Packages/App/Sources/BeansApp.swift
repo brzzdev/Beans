@@ -10,7 +10,7 @@ public struct BeansApp: App {
 	}
 
 	public init() {
-		store.send(.setup)
+		send(.setup)
 	}
 
 	public var body: some Scene {
@@ -25,7 +25,7 @@ public struct BeansApp: App {
 
 private struct MenuContent: View {
 	let store: StoreOf<AppReducer>
-	
+
 	var body: some View {
 		if store.isActive {
 			if let duration = store.duration {
@@ -54,11 +54,11 @@ private struct MenuContent: View {
 		Divider()
 		Toggle("Activate on Launch", isOn: Binding(
 			get: { store.activateOnLaunch },
-			set: { _ in store.send(.view(.toggleActivateOnLaunch)) }
+			set: { _ in store.send(.view(.toggleActivateOnLaunch)) },
 		))
 		Toggle("Launch at Login", isOn: Binding(
 			get: { store.launchAtLogin },
-			set: { _ in store.send(.view(.toggleLaunchAtLogin)) }
+			set: { _ in store.send(.view(.toggleLaunchAtLogin)) },
 		))
 		Divider()
 		Button("Quit") {

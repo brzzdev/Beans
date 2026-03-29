@@ -4,13 +4,24 @@ import PackageDescription
 
 let package = Package(
 	name: "App",
-	platforms: [.macOS(.v26)],
+	platforms: [
+		.macOS(.v26),
+	],
 	products: [
-		.library(name: "App", targets: ["App"]),
+		.library(
+			name: "App",
+			targets: ["App"],
+		),
 	],
 	dependencies: [
-		.package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.25.1"),
-		.package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.11.0"),
+		.package(
+			url: "https://github.com/pointfreeco/swift-composable-architecture",
+			from: "1.25.1",
+		),
+		.package(
+			url: "https://github.com/pointfreeco/swift-dependencies",
+			from: "1.12.0",
+		),
 		.package(path: "../Dependencies/DepNSApp"),
 		.package(path: "../Dependencies/DepPowerAssertion"),
 		.package(path: "../Dependencies/DepSMAppService"),
@@ -24,7 +35,7 @@ let package = Package(
 				"DepPowerAssertion",
 				"DepSMAppService",
 			],
-			path: "Sources"
+			path: "Sources",
 		),
 		.testTarget(
 			name: "AppTests",
@@ -36,7 +47,7 @@ let package = Package(
 				"DepPowerAssertion",
 				"DepSMAppService",
 			],
-			path: "Tests"
+			path: "Tests",
 		),
-	]
+	],
 )

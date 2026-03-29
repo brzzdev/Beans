@@ -18,22 +18,21 @@ public struct AppReducer: Reducer, Sendable {
 		init() {}
 
 		#if DEBUG
-			init(
-				activateOnLaunch: Bool = false,
-				duration: Duration? = nil,
-				isActive: Bool = false,
-				launchAtLogin: Bool = false
-			) {
-				self._activateOnLaunch = Shared(wrappedValue: activateOnLaunch, .activateOnLaunch)
-				self.duration = duration
-				self.isActive = isActive
-				self.launchAtLogin = launchAtLogin
-			}
+		init(
+			activateOnLaunch: Bool = false,
+			duration: Duration? = nil,
+			isActive: Bool = false,
+			launchAtLogin: Bool = false,
+		) {
+			_activateOnLaunch = Shared(wrappedValue: activateOnLaunch, .activateOnLaunch)
+			self.duration = duration
+			self.isActive = isActive
+			self.launchAtLogin = launchAtLogin
+		}
 		#endif
 	}
 
 	public enum Action: ViewAction {
-		case setup
 		case timerFinished
 		case view(View)
 
@@ -43,6 +42,7 @@ public struct AppReducer: Reducer, Sendable {
 			case activateIndefinitely
 			case deactivate
 			case quit
+			case setup
 			case toggleActivateOnLaunch
 			case toggleLaunchAtLogin
 		}
@@ -60,7 +60,7 @@ public struct AppReducer: Reducer, Sendable {
 	public var body: some ReducerOf<Self> {
 		Reduce { state, action in
 			switch action {
-			case .setup:
+			case .view(.setup):
 				state.launchAtLogin = smAppService.isEnabled()
 				if state.activateOnLaunch {
 					logger.info("Activate on launch enabled, activating")
@@ -129,25 +129,5 @@ public struct AppReducer: Reducer, Sendable {
 extension SharedReaderKey where Self == AppStorageKey<Bool>.Default {
 	static var activateOnLaunch: Self {
 		Self[.appStorage("activateOnLaunch"), default: false]
-	}
-}
-
-public enum ActivationDuration: String, CaseIterable, Identifiable, Sendable {
-	case thirtyMinutes = "30 Minutes"
-	case oneHour = "1 Hour"
-	case twoHours = "2 Hours"
-	case fourHours = "4 Hours"
-
-	public var id: Self { self }
-
-	public var label: String { rawValue }
-
-	public var duration: Duration {
-		switch self {
-		case .thirtyMinutes: .seconds(1_800)
-		case .oneHour: .seconds(3_600)
-		case .twoHours: .seconds(7_200)
-		case .fourHours: .seconds(14_400)
-		}
 	}
 }
