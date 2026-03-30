@@ -9,10 +9,6 @@ public struct BeansApp: App {
 		AppReducer()
 	}
 
-	public init() {
-		send(.setup)
-	}
-
 	public var body: some Scene {
 		MenuBarExtra(isInserted: $isInserted) {
 			MenuContent(store: store)
@@ -20,6 +16,10 @@ public struct BeansApp: App {
 			Image(systemName: store.isActive ? "mug.fill" : "mug")
 				.symbolRenderingMode(.hierarchical)
 		}
+	}
+
+	public init() {
+		send(.setup)
 	}
 }
 

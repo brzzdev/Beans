@@ -20,8 +20,6 @@ public struct PowerAssertionClient: Sendable {
 }
 
 extension PowerAssertionClient: DependencyKey {
-	private static let assertionID = Mutex<IOPMAssertionID>(0)
-
 	public static let liveValue = Self(
 		activate: {
 			assertionID.withLock { id in
@@ -49,6 +47,8 @@ extension PowerAssertionClient: DependencyKey {
 	)
 
 	public static let testValue = Self()
+
+	private static let assertionID = Mutex<IOPMAssertionID>(0)
 
 	private static func deactivate(id: inout IOPMAssertionID) {
 		if id != 0 {
