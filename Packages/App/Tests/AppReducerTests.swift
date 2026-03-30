@@ -12,6 +12,7 @@ import Testing
 struct AppReducerTests {
 	final class Counter: Sendable {
 		private let value = Mutex(0)
+
 		func increment() {
 			value.withLock { $0 += 1 }
 		}
@@ -24,7 +25,8 @@ struct AppReducerTests {
 	let activateCount = Counter()
 	let deactivateCount = Counter()
 
-	@Test func `activate indefinitely`() async {
+	@Test
+	func `activate indefinitely`() async {
 		let store = makeStore()
 
 		await store.send(.view(.activateIndefinitely)) {
@@ -35,7 +37,8 @@ struct AppReducerTests {
 		#expect(activateCount.get() == 1)
 	}
 
-	@Test func `activate for duration`() async {
+	@Test
+	func `activate for duration`() async {
 		let clock = TestClock()
 		let store = makeStore {
 			$0.continuousClock = clock
@@ -58,7 +61,8 @@ struct AppReducerTests {
 		#expect(deactivateCount.get() == 1)
 	}
 
-	@Test func deactivate() async {
+	@Test
+	func deactivate() async {
 		let store = makeStore()
 
 		await store.send(.view(.activateIndefinitely)) {
@@ -73,7 +77,8 @@ struct AppReducerTests {
 		#expect(deactivateCount.get() == 1)
 	}
 
-	@Test func `deactivate cancels timer`() async {
+	@Test
+	func `deactivate cancels timer`() async {
 		let clock = TestClock()
 		let store = makeStore {
 			$0.continuousClock = clock
@@ -93,7 +98,8 @@ struct AppReducerTests {
 		#expect(deactivateCount.get() == 1)
 	}
 
-	@Test func `activate indefinitely cancels existing timer`() async {
+	@Test
+	func `activate indefinitely cancels existing timer`() async {
 		let clock = TestClock()
 		let store = makeStore {
 			$0.continuousClock = clock
@@ -112,7 +118,8 @@ struct AppReducerTests {
 		#expect(activateCount.get() == 2)
 	}
 
-	@Test func `activate for duration replaces existing`() async {
+	@Test
+	func `activate for duration replaces existing`() async {
 		let clock = TestClock()
 		let store = makeStore {
 			$0.continuousClock = clock
@@ -138,7 +145,8 @@ struct AppReducerTests {
 		#expect(deactivateCount.get() == 1)
 	}
 
-	@Test func `timer finished`() async {
+	@Test
+	func `timer finished`() async {
 		let store = makeStore(state: AppReducer.State(duration: .seconds(1_800), isActive: true))
 
 		await store.send(.timerFinished) {
@@ -149,7 +157,8 @@ struct AppReducerTests {
 		#expect(deactivateCount.get() == 1)
 	}
 
-	@Test func quit() async {
+	@Test
+	func quit() async {
 		let terminateCount = Counter()
 		let store = makeStore {
 			$0.nsApp = NSAppDependency(terminate: { terminateCount.increment() })
@@ -160,7 +169,8 @@ struct AppReducerTests {
 		#expect(deactivateCount.get() == 1)
 	}
 
-	@Test func `setup activates on launch`() async {
+	@Test
+	func `setup activates on launch`() async {
 		let store = makeStore {
 			$0.smAppService = SMAppServiceDependency(
 				isEnabled: { false },
@@ -178,7 +188,8 @@ struct AppReducerTests {
 		#expect(activateCount.get() == 1)
 	}
 
-	@Test func `setup does not activate when disabled`() async {
+	@Test
+	func `setup does not activate when disabled`() async {
 		let store = makeStore {
 			$0.smAppService = SMAppServiceDependency(
 				isEnabled: { false },
@@ -192,7 +203,8 @@ struct AppReducerTests {
 		#expect(activateCount.get() == 0)
 	}
 
-	@Test func `setup reads launch at login status`() async {
+	@Test
+	func `setup reads launch at login status`() async {
 		let store = makeStore {
 			$0.smAppService = SMAppServiceDependency(
 				isEnabled: { true },
@@ -206,7 +218,8 @@ struct AppReducerTests {
 		}
 	}
 
-	@Test func `toggle activate on launch`() async {
+	@Test
+	func `toggle activate on launch`() async {
 		let store = makeStore()
 
 		await store.send(.view(.toggleActivateOnLaunch)) {
@@ -218,7 +231,8 @@ struct AppReducerTests {
 		}
 	}
 
-	@Test func `toggle launch at login`() async {
+	@Test
+	func `toggle launch at login`() async {
 		let registerCount = Counter()
 		let store = makeStore {
 			$0.smAppService = SMAppServiceDependency(
@@ -235,7 +249,8 @@ struct AppReducerTests {
 		#expect(registerCount.get() == 1)
 	}
 
-	@Test func `toggle launch at login unregisters`() async {
+	@Test
+	func `toggle launch at login unregisters`() async {
 		let unregisterCount = Counter()
 		let store = makeStore(state: AppReducer.State(launchAtLogin: true)) {
 			$0.smAppService = SMAppServiceDependency(

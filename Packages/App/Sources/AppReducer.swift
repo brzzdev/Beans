@@ -55,8 +55,6 @@ public struct AppReducer: Reducer, Sendable {
 	@Dependency(\.powerAssertion) var powerAssertion
 	@Dependency(\.smAppService) var smAppService
 
-	public init() {}
-
 	public var body: some ReducerOf<Self> {
 		Reduce { state, action in
 			switch action {
@@ -87,7 +85,7 @@ public struct AppReducer: Reducer, Sendable {
 				state.duration = nil
 				return .cancel(id: CancelID.timer)
 
-			case .view(.deactivate), .timerFinished:
+			case .timerFinished, .view(.deactivate):
 				logger.info("Deactivating")
 				powerAssertion.deactivate()
 				state.isActive = false
@@ -124,6 +122,8 @@ public struct AppReducer: Reducer, Sendable {
 			}
 		}
 	}
+
+	public init() {}
 }
 
 extension SharedReaderKey where Self == AppStorageKey<Bool>.Default {
