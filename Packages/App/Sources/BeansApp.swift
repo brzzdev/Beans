@@ -56,6 +56,10 @@ private struct MenuContent: View {
 			get: { store.activateOnLaunch },
 			set: { _ in store.send(.view(.toggleActivateOnLaunch)) },
 		))
+		Toggle("Deactivate on Low Battery", isOn: Binding(
+			get: { store.deactivateOnLowBattery },
+			set: { _ in store.send(.view(.toggleDeactivateOnLowBattery)) },
+		))
 		Toggle("Launch at Login", isOn: Binding(
 			get: { store.launchAtLogin },
 			set: { _ in store.send(.view(.toggleLaunchAtLogin)) },
