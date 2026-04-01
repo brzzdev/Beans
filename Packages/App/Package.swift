@@ -22,6 +22,7 @@ let package = Package(
 			url: "https://github.com/pointfreeco/swift-dependencies",
 			from: "1.12.0",
 		),
+		.package(path: "../Dependencies/DepBatteryLevel"),
 		.package(path: "../Dependencies/DepNSApp"),
 		.package(path: "../Dependencies/DepPowerAssertion"),
 		.package(path: "../Dependencies/DepSMAppService"),
@@ -31,6 +32,7 @@ let package = Package(
 			name: "App",
 			dependencies: [
 				.product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+				"DepBatteryLevel",
 				"DepNSApp",
 				"DepPowerAssertion",
 				"DepSMAppService",
@@ -43,6 +45,7 @@ let package = Package(
 				"App",
 				.product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
 				.product(name: "DependenciesTestSupport", package: "swift-dependencies"),
+				"DepBatteryLevel",
 				"DepNSApp",
 				"DepPowerAssertion",
 				"DepSMAppService",

@@ -1,5 +1,6 @@
 @testable import App
 import ComposableArchitecture
+import DepBatteryLevel
 import DependenciesTestSupport
 import DepNSApp
 import DepPowerAssertion
@@ -265,6 +266,72 @@ struct AppReducerTests {
 		}
 
 		#expect(unregisterCount.get() == 1)
+	}
+
+	@Test
+	func `toggle deactivate on low battery`() async {
+		let store = makeStore()
+
+		await store.send(.view(.toggleDeactivateOnLowBattery)) {
+			$0.$deactivateOnLowBattery.withLock { $0 = true }
+		}
+
+		await store.send(.view(.toggleDeactivateOnLowBattery)) {
+			$0.$deactivateOnLowBattery.withLock { $0 = false }
+		}
+	}
+
+	@Test
+	func `deactivates when battery drops to 10 percent`() async {
+		let store = makeStore(state: AppReducer.State(isActive: true))
+		store.state.$deactivateOnLowBattery.withLock { $0 = true }
+
+		await store.send(.batteryLevelUpdated(10)) {
+			$0.isActive = false
+		}
+
+		#expect(deactivateCount.get() == 1)
+	}
+
+	@Test
+	func `deactivates when battery drops below 10 percent`() async {
+		let store = makeStore(state: AppReducer.State(isActive: true))
+		store.state.$deactivateOnLowBattery.withLock { $0 = true }
+
+		await store.send(.batteryLevelUpdated(5)) {
+			$0.isActive = false
+		}
+
+		#expect(deactivateCount.get() == 1)
+	}
+
+	@Test
+	func `does not deactivate when battery above 10 percent`() async {
+		let store = makeStore(state: AppReducer.State(isActive: true))
+		store.state.$deactivateOnLowBattery.withLock { $0 = true }
+
+		await store.send(.batteryLevelUpdated(11))
+
+		#expect(deactivateCount.get() == 0)
+	}
+
+	@Test
+	func `does not deactivate when setting disabled`() async {
+		let store = makeStore(state: AppReducer.State(isActive: true))
+
+		await store.send(.batteryLevelUpdated(5))
+
+		#expect(deactivateCount.get() == 0)
+	}
+
+	@Test
+	func `does not deactivate when already inactive`() async {
+		let store = makeStore()
+		store.state.$deactivateOnLowBattery.withLock { $0 = true }
+
+		await store.send(.batteryLevelUpdated(5))
+
+		#expect(deactivateCount.get() == 0)
 	}
 
 	private func makeStore(
