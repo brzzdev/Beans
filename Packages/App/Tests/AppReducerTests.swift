@@ -220,20 +220,20 @@ struct AppReducerTests {
 	}
 
 	@Test
-	func `toggle activate on launch`() async {
+	func `set activate on launch`() async {
 		let store = makeStore()
 
-		await store.send(.view(.toggleActivateOnLaunch)) {
+		await store.send(.view(.setActivateOnLaunch(true))) {
 			$0.$activateOnLaunch.withLock { $0 = true }
 		}
 
-		await store.send(.view(.toggleActivateOnLaunch)) {
+		await store.send(.view(.setActivateOnLaunch(false))) {
 			$0.$activateOnLaunch.withLock { $0 = false }
 		}
 	}
 
 	@Test
-	func `toggle launch at login`() async {
+	func `set launch at login registers`() async {
 		let registerCount = Counter()
 		let store = makeStore {
 			$0.smAppService = SMAppServiceDependency(
@@ -243,7 +243,7 @@ struct AppReducerTests {
 			)
 		}
 
-		await store.send(.view(.toggleLaunchAtLogin)) {
+		await store.send(.view(.setLaunchAtLogin(true))) {
 			$0.launchAtLogin = true
 		}
 
@@ -251,7 +251,7 @@ struct AppReducerTests {
 	}
 
 	@Test
-	func `toggle launch at login unregisters`() async {
+	func `set launch at login unregisters`() async {
 		let unregisterCount = Counter()
 		let store = makeStore(state: AppReducer.State(launchAtLogin: true)) {
 			$0.smAppService = SMAppServiceDependency(
@@ -261,7 +261,7 @@ struct AppReducerTests {
 			)
 		}
 
-		await store.send(.view(.toggleLaunchAtLogin)) {
+		await store.send(.view(.setLaunchAtLogin(false))) {
 			$0.launchAtLogin = false
 		}
 
@@ -269,14 +269,14 @@ struct AppReducerTests {
 	}
 
 	@Test
-	func `toggle deactivate on low battery`() async {
+	func `set deactivate on low battery`() async {
 		let store = makeStore()
 
-		await store.send(.view(.toggleDeactivateOnLowBattery)) {
+		await store.send(.view(.setDeactivateOnLowBattery(true))) {
 			$0.$deactivateOnLowBattery.withLock { $0 = true }
 		}
 
-		await store.send(.view(.toggleDeactivateOnLowBattery)) {
+		await store.send(.view(.setDeactivateOnLowBattery(false))) {
 			$0.$deactivateOnLowBattery.withLock { $0 = false }
 		}
 	}

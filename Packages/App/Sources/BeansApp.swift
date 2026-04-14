@@ -24,7 +24,7 @@ public struct BeansApp: App {
 }
 
 private struct MenuContent: View {
-	let store: StoreOf<AppReducer>
+	@Bindable var store: StoreOf<AppReducer>
 
 	var body: some View {
 		if store.isActive {
@@ -52,18 +52,12 @@ private struct MenuContent: View {
 			}
 		}
 		Divider()
-		Toggle("Activate on Launch", isOn: Binding(
-			get: { store.activateOnLaunch },
-			set: { _ in store.send(.view(.toggleActivateOnLaunch)) },
-		))
-		Toggle("Deactivate on Low Battery", isOn: Binding(
-			get: { store.deactivateOnLowBattery },
-			set: { _ in store.send(.view(.toggleDeactivateOnLowBattery)) },
-		))
-		Toggle("Launch at Login", isOn: Binding(
-			get: { store.launchAtLogin },
-			set: { _ in store.send(.view(.toggleLaunchAtLogin)) },
-		))
+		Toggle("Activate on Launch", isOn: $store.activateOnLaunch.sending(\.view.setActivateOnLaunch))
+		Toggle(
+			"Deactivate on Low Battery",
+			isOn: $store.deactivateOnLowBattery.sending(\.view.setDeactivateOnLowBattery),
+		)
+		Toggle("Launch at Login", isOn: $store.launchAtLogin.sending(\.view.setLaunchAtLogin))
 		Divider()
 		Button("Quit") {
 			store.send(.view(.quit))
