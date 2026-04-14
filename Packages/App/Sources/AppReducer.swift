@@ -47,10 +47,10 @@ public struct AppReducer: Reducer, Sendable {
 			case activateIndefinitely
 			case deactivate
 			case quit
+			case setActivateOnLaunch(Bool)
+			case setDeactivateOnLowBattery(Bool)
+			case setLaunchAtLogin(Bool)
 			case setup
-			case toggleActivateOnLaunch
-			case toggleDeactivateOnLowBattery
-			case toggleLaunchAtLogin
 		}
 	}
 
@@ -116,30 +116,27 @@ public struct AppReducer: Reducer, Sendable {
 					await nsApp.terminate()
 				}
 
-			case .view(.toggleActivateOnLaunch):
-				state.$activateOnLaunch.withLock { $0.toggle() }
-				let activateOnLaunch = state.activateOnLaunch
-				logger.info("Activate on launch: \(activateOnLaunch)")
+			case let .view(.setActivateOnLaunch(enabled)):
+				state.$activateOnLaunch.withLock { $0 = enabled }
+				logger.info("Activate on launch: \(enabled)")
 				return .none
 
-			case .view(.toggleDeactivateOnLowBattery):
-				state.$deactivateOnLowBattery.withLock { $0.toggle() }
-				let deactivateOnLowBattery = state.deactivateOnLowBattery
-				logger.info("Deactivate on low battery: \(deactivateOnLowBattery)")
+			case let .view(.setDeactivateOnLowBattery(enabled)):
+				state.$deactivateOnLowBattery.withLock { $0 = enabled }
+				logger.info("Deactivate on low battery: \(enabled)")
 				return startBatteryMonitorIfNeeded(state: state)
 
-			case .view(.toggleLaunchAtLogin):
+			case let .view(.setLaunchAtLogin(enabled)):
 				do {
-					if state.launchAtLogin {
-						try smAppService.unregister()
-					} else {
+					if enabled {
 						try smAppService.register()
+					} else {
+						try smAppService.unregister()
 					}
-					state.launchAtLogin.toggle()
-					let launchAtLogin = state.launchAtLogin
-					logger.info("Launch at login: \(launchAtLogin)")
+					state.launchAtLogin = enabled
+					logger.info("Launch at login: \(enabled)")
 				} catch {
-					logger.error("Failed to toggle launch at login: \(error)")
+					logger.error("Failed to set launch at login: \(error)")
 				}
 				return .none
 			}
