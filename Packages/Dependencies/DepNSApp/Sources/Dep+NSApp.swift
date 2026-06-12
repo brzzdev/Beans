@@ -1,5 +1,5 @@
 import AppKit
-import Dependencies
+public import Dependencies
 import DependenciesMacros
 
 extension DependencyValues {
