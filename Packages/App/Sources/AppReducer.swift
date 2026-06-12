@@ -57,6 +57,10 @@ public struct AppReducer: Reducer, Sendable {
 
 	private enum CancelID { case batteryMonitor, timer }
 
+	/// Battery percentage at or below which an active session deactivates
+	/// when "deactivate on low battery" is enabled.
+	private static let lowBatteryThreshold = 10
+
 	@Dependency(\.batteryLevel) var batteryLevel
 	@Dependency(\.continuousClock) var clock
 	@Dependency(\.nsApp) var nsApp
@@ -67,7 +71,7 @@ public struct AppReducer: Reducer, Sendable {
 		Reduce { state, action in
 			switch action {
 			case let .batteryLevelUpdated(level):
-				if state.isActive, state.deactivateOnLowBattery, level <= 10 {
+				if state.isActive, state.deactivateOnLowBattery, level <= Self.lowBatteryThreshold {
 					logger.info("Battery at \(level)%, deactivating")
 					return deactivate(state: &state)
 				}
