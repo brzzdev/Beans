@@ -28,9 +28,11 @@ private struct MenuContent: View {
 
 	var body: some View {
 		if store.isActive {
-			if let duration = store.duration {
+			switch store.activation {
+			case let .timed(duration):
 				Text("Keeping awake for \(duration.formatted())")
-			} else {
+
+			default:
 				Text("Keeping awake indefinitely")
 			}
 			Divider()
