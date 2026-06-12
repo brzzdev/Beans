@@ -1,4 +1,4 @@
-import ComposableArchitecture
+public import ComposableArchitecture
 import DepBatteryLevel
 import DepNSApp
 import DepPowerAssertion

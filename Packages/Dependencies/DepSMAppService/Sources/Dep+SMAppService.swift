@@ -1,4 +1,4 @@
-import Dependencies
+public import Dependencies
 import DependenciesMacros
 import ServiceManagement
 

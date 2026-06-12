@@ -1,5 +1,5 @@
-import ComposableArchitecture
-import SwiftUI
+public import ComposableArchitecture
+public import SwiftUI
 
 @ViewAction(for: AppReducer.self)
 public struct BeansApp: App {
