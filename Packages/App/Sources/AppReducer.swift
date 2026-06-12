@@ -13,24 +13,25 @@ public struct AppReducer: Reducer, Sendable {
 	public struct State: Equatable {
 		@Shared(.activateOnLaunch) public var activateOnLaunch
 		@Shared(.deactivateOnLowBattery) public var deactivateOnLowBattery
-		public var duration: Duration?
-		public var isActive = false
+		public var activation: Activation = .inactive
 		public var launchAtLogin = false
+
+		public var isActive: Bool {
+			activation != .inactive
+		}
 
 		init() {}
 
 		#if DEBUG
 		init(
 			activateOnLaunch: Bool = false,
+			activation: Activation = .inactive,
 			deactivateOnLowBattery: Bool = false,
-			duration: Duration? = nil,
-			isActive: Bool = false,
 			launchAtLogin: Bool = false,
 		) {
 			_activateOnLaunch = Shared(wrappedValue: activateOnLaunch, .activateOnLaunch)
 			_deactivateOnLowBattery = Shared(wrappedValue: deactivateOnLowBattery, .deactivateOnLowBattery)
-			self.duration = duration
-			self.isActive = isActive
+			self.activation = activation
 			self.launchAtLogin = launchAtLogin
 		}
 		#endif
@@ -76,34 +77,17 @@ public struct AppReducer: Reducer, Sendable {
 				state.launchAtLogin = smAppService.isEnabled()
 				if state.activateOnLaunch {
 					logger.info("Activate on launch enabled, activating")
-					powerAssertion.activate()
-					state.isActive = true
+					return activate(state: &state, .indefinite)
 				}
-				return startBatteryMonitorIfNeeded(state: state)
+				return .none
 
 			case let .view(.activateForDuration(duration)):
 				logger.info("Activating for \(duration)")
-				powerAssertion.activate()
-				state.isActive = true
-				state.duration = duration
-				return .merge(
-					.run { send in
-						try await clock.sleep(for: duration)
-						await send(.timerFinished)
-					}
-					.cancellable(id: CancelID.timer, cancelInFlight: true),
-					startBatteryMonitorIfNeeded(state: state),
-				)
+				return activate(state: &state, .timed(duration))
 
 			case .view(.activateIndefinitely):
 				logger.info("Activating indefinitely")
-				powerAssertion.activate()
-				state.isActive = true
-				state.duration = nil
-				return .merge(
-					.cancel(id: CancelID.timer),
-					startBatteryMonitorIfNeeded(state: state),
-				)
+				return activate(state: &state, .indefinite)
 
 			case .timerFinished, .view(.deactivate):
 				logger.info("Deactivating")
@@ -124,7 +108,7 @@ public struct AppReducer: Reducer, Sendable {
 			case let .view(.setDeactivateOnLowBattery(enabled)):
 				state.$deactivateOnLowBattery.withLock { $0 = enabled }
 				logger.info("Deactivate on low battery: \(enabled)")
-				return startBatteryMonitorIfNeeded(state: state)
+				return monitorEffect(state: state)
 
 			case let .view(.setLaunchAtLogin(enabled)):
 				do {
@@ -145,17 +129,36 @@ public struct AppReducer: Reducer, Sendable {
 
 	public init() {}
 
+	private func activate(state: inout State, _ activation: Activation) -> Effect<Action> {
+		powerAssertion.activate()
+		state.activation = activation
+		return .merge(
+			timerEffect(for: activation),
+			monitorEffect(state: state),
+		)
+	}
+
 	private func deactivate(state: inout State) -> Effect<Action> {
 		powerAssertion.deactivate()
-		state.isActive = false
-		state.duration = nil
+		state.activation = .inactive
 		return .merge(
 			.cancel(id: CancelID.batteryMonitor),
 			.cancel(id: CancelID.timer),
 		)
 	}
 
-	private func startBatteryMonitorIfNeeded(state: State) -> Effect<Action> {
+	private func timerEffect(for activation: Activation) -> Effect<Action> {
+		guard case let .timed(duration) = activation else {
+			return .cancel(id: CancelID.timer)
+		}
+		return .run { send in
+			try await clock.sleep(for: duration)
+			await send(.timerFinished)
+		}
+		.cancellable(id: CancelID.timer, cancelInFlight: true)
+	}
+
+	private func monitorEffect(state: State) -> Effect<Action> {
 		if state.deactivateOnLowBattery, state.isActive {
 			return .run { send in
 				for await level in batteryLevel.updates() {

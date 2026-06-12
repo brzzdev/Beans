@@ -31,8 +31,7 @@ struct AppReducerTests {
 		let store = makeStore()
 
 		await store.send(.view(.activateIndefinitely)) {
-			$0.isActive = true
-			$0.duration = nil
+			$0.activation = .indefinite
 		}
 
 		#expect(activateCount.get() == 1)
@@ -47,16 +46,14 @@ struct AppReducerTests {
 
 		let duration = Duration.seconds(1_800)
 		await store.send(.view(.activateForDuration(duration))) {
-			$0.isActive = true
-			$0.duration = duration
+			$0.activation = .timed(duration)
 		}
 
 		#expect(activateCount.get() == 1)
 
 		await clock.advance(by: duration)
 		await store.receive(\.timerFinished) {
-			$0.isActive = false
-			$0.duration = nil
+			$0.activation = .inactive
 		}
 
 		#expect(deactivateCount.get() == 1)
@@ -67,11 +64,11 @@ struct AppReducerTests {
 		let store = makeStore()
 
 		await store.send(.view(.activateIndefinitely)) {
-			$0.isActive = true
+			$0.activation = .indefinite
 		}
 
 		await store.send(.view(.deactivate)) {
-			$0.isActive = false
+			$0.activation = .inactive
 		}
 
 		#expect(activateCount.get() == 1)
@@ -87,13 +84,11 @@ struct AppReducerTests {
 
 		let duration = Duration.seconds(3_600)
 		await store.send(.view(.activateForDuration(duration))) {
-			$0.isActive = true
-			$0.duration = duration
+			$0.activation = .timed(duration)
 		}
 
 		await store.send(.view(.deactivate)) {
-			$0.isActive = false
-			$0.duration = nil
+			$0.activation = .inactive
 		}
 
 		#expect(deactivateCount.get() == 1)
@@ -108,12 +103,11 @@ struct AppReducerTests {
 
 		let duration = Duration.seconds(3_600)
 		await store.send(.view(.activateForDuration(duration))) {
-			$0.isActive = true
-			$0.duration = duration
+			$0.activation = .timed(duration)
 		}
 
 		await store.send(.view(.activateIndefinitely)) {
-			$0.duration = nil
+			$0.activation = .indefinite
 		}
 
 		#expect(activateCount.get() == 2)
@@ -127,20 +121,18 @@ struct AppReducerTests {
 		}
 
 		await store.send(.view(.activateForDuration(.seconds(1_800)))) {
-			$0.isActive = true
-			$0.duration = .seconds(1_800)
+			$0.activation = .timed(.seconds(1_800))
 		}
 
 		await store.send(.view(.activateForDuration(.seconds(7_200)))) {
-			$0.duration = .seconds(7_200)
+			$0.activation = .timed(.seconds(7_200))
 		}
 
 		#expect(activateCount.get() == 2)
 
 		await clock.advance(by: .seconds(7_200))
 		await store.receive(\.timerFinished) {
-			$0.isActive = false
-			$0.duration = nil
+			$0.activation = .inactive
 		}
 
 		#expect(deactivateCount.get() == 1)
@@ -148,11 +140,10 @@ struct AppReducerTests {
 
 	@Test
 	func `timer finished`() async {
-		let store = makeStore(state: AppReducer.State(duration: .seconds(1_800), isActive: true))
+		let store = makeStore(state: AppReducer.State(activation: .timed(.seconds(1_800))))
 
 		await store.send(.timerFinished) {
-			$0.isActive = false
-			$0.duration = nil
+			$0.activation = .inactive
 		}
 
 		#expect(deactivateCount.get() == 1)
@@ -183,7 +174,7 @@ struct AppReducerTests {
 		store.state.$activateOnLaunch.withLock { $0 = true }
 
 		await store.send(.view(.setup)) {
-			$0.isActive = true
+			$0.activation = .indefinite
 		}
 
 		#expect(activateCount.get() == 1)
@@ -283,11 +274,11 @@ struct AppReducerTests {
 
 	@Test
 	func `deactivates when battery drops to 10 percent`() async {
-		let store = makeStore(state: AppReducer.State(isActive: true))
+		let store = makeStore(state: AppReducer.State(activation: .indefinite))
 		store.state.$deactivateOnLowBattery.withLock { $0 = true }
 
 		await store.send(.batteryLevelUpdated(10)) {
-			$0.isActive = false
+			$0.activation = .inactive
 		}
 
 		#expect(deactivateCount.get() == 1)
@@ -295,11 +286,11 @@ struct AppReducerTests {
 
 	@Test
 	func `deactivates when battery drops below 10 percent`() async {
-		let store = makeStore(state: AppReducer.State(isActive: true))
+		let store = makeStore(state: AppReducer.State(activation: .indefinite))
 		store.state.$deactivateOnLowBattery.withLock { $0 = true }
 
 		await store.send(.batteryLevelUpdated(5)) {
-			$0.isActive = false
+			$0.activation = .inactive
 		}
 
 		#expect(deactivateCount.get() == 1)
@@ -307,7 +298,7 @@ struct AppReducerTests {
 
 	@Test
 	func `does not deactivate when battery above 10 percent`() async {
-		let store = makeStore(state: AppReducer.State(isActive: true))
+		let store = makeStore(state: AppReducer.State(activation: .indefinite))
 		store.state.$deactivateOnLowBattery.withLock { $0 = true }
 
 		await store.send(.batteryLevelUpdated(11))
@@ -317,7 +308,7 @@ struct AppReducerTests {
 
 	@Test
 	func `does not deactivate when setting disabled`() async {
-		let store = makeStore(state: AppReducer.State(isActive: true))
+		let store = makeStore(state: AppReducer.State(activation: .indefinite))
 
 		await store.send(.batteryLevelUpdated(5))
 
