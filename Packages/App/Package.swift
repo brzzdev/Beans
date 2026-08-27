@@ -20,7 +20,7 @@ let package = Package(
 		),
 		.package(
 			url: "https://github.com/pointfreeco/swift-dependencies",
-			from: "1.16.0",
+			from: "1.17.0",
 		),
 		.package(path: "../Dependencies/DepBatteryLevel"),
 		.package(path: "../Dependencies/DepNSApp"),
