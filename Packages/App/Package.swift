@@ -16,11 +16,11 @@ let package = Package(
 	dependencies: [
 		.package(
 			url: "https://github.com/pointfreeco/swift-composable-architecture",
-			from: "1.26.1",
+			from: "1.26.2",
 		),
 		.package(
 			url: "https://github.com/pointfreeco/swift-dependencies",
-			from: "1.17.0",
+			from: "1.17.1",
 		),
 		.package(path: "../Dependencies/DepBatteryLevel"),
 		.package(path: "../Dependencies/DepNSApp"),
