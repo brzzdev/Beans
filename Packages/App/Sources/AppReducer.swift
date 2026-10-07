@@ -30,7 +30,10 @@ public struct AppReducer: Reducer, Sendable {
 			launchAtLogin: Bool = false,
 		) {
 			_activateOnLaunch = Shared(wrappedValue: activateOnLaunch, .activateOnLaunch)
-			_deactivateOnLowBattery = Shared(wrappedValue: deactivateOnLowBattery, .deactivateOnLowBattery)
+			_deactivateOnLowBattery = Shared(
+				wrappedValue: deactivateOnLowBattery,
+				.deactivateOnLowBattery,
+			)
 			self.activation = activation
 			self.launchAtLogin = launchAtLogin
 		}
