@@ -1,6 +1,5 @@
 [tools]
 just = "latest"
-node = "latest"
 "npm:git-format-staged" = "latest"
 swiftformat = "latest"
 swiftlint = "latest"
