@@ -24,7 +24,8 @@ public struct BeansApp: App {
 }
 
 private struct MenuContent: View {
-	@Bindable private var store: StoreOf<AppReducer>
+	// swiftformat:disable:next privateSwiftUIDynamicProperties
+	@Bindable var store: StoreOf<AppReducer>
 
 	var body: some View {
 		if store.isActive {
