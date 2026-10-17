@@ -24,7 +24,7 @@ just test     # run tests
 just install  # archive, notarize, install to /Applications
 ```
 
-Requires Xcode 26+ and [just](https://github.com/casey/just).
+Requires Xcode 26+ and [mise](https://mise.jdx.dev). `mise install` provides [just](https://github.com/casey/just) and the rest of the tooling.
 
 ## How it works
 

@@ -23,8 +23,8 @@ struct AppReducerTests {
 		}
 	}
 
-	let activateCount = Counter()
-	let deactivateCount = Counter()
+	private let activateCount = Counter()
+	private let deactivateCount = Counter()
 
 	@Test
 	func `activate indefinitely`() async {
